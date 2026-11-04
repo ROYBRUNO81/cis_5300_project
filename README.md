@@ -13,7 +13,7 @@ We ask two questions:
 
 ### Task definition
 
-- **Input:** a partially written paragraph (the *prefix*) plus *linked resources*, which are the other sections of the same paper. The target paragraph is removed from the resources so the model cannot copy the answer.
+- **Input:** a partially written paragraph (the *prefix*) plus *context*: every paragraph of the same paper that comes before it, which is what the writer has already written. The target paragraph and everything after it are never in the context.
 - **Output:** (a) a continuation of 10, 30 or 60 words, and (b) a confidence score `p ∈ [0, 1]` that the continuation is acceptable.
 
 ### Planned systems
@@ -38,8 +38,13 @@ data.md                   data description (Milestone 1 deliverable)
 requirements.txt
 scripts/
   download_papers.py      step 1: download raw arXiv PDFs + metadata
+  build_dataset.py        step 2: PDFs -> prefix/target/context examples, 80/10/10 split, data.tar.gz
+report/
+  milestone1_data_description.md
 data/
   raw/                    PDFs (not committed) + metadata.jsonl
+  processed/              train/dev/test.jsonl, paper_splits.jsonl, stats.json
+  data.tar.gz             Milestone 1 submission archive (not committed)
 ```
 
 ## Setup
@@ -49,6 +54,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/download_papers.py          # 100 papers each from cs.CL, cs.LG, cs.CV
+python scripts/build_dataset.py            # build examples + splits + archive
 ```
 
 ## Milestones

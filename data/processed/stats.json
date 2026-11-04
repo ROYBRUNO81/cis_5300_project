@@ -1,0 +1,52 @@
+{
+  "papers_downloaded": 300,
+  "papers_used": 297,
+  "papers_skipped": 3,
+  "splits": {
+    "train": {
+      "papers": 237,
+      "examples": 1182,
+      "by_domain": {
+        "nlp": 392,
+        "ml": 390,
+        "cv": 400
+      },
+      "by_target_words": {
+        "10": 432,
+        "30": 446,
+        "60": 304
+      },
+      "avg_context_paragraphs": 30.4
+    },
+    "dev": {
+      "papers": 30,
+      "examples": 150,
+      "by_domain": {
+        "nlp": 50,
+        "ml": 50,
+        "cv": 50
+      },
+      "by_target_words": {
+        "10": 63,
+        "30": 43,
+        "60": 44
+      },
+      "avg_context_paragraphs": 30.5
+    },
+    "test": {
+      "papers": 30,
+      "examples": 150,
+      "by_domain": {
+        "nlp": 50,
+        "ml": 50,
+        "cv": 50
+      },
+      "by_target_words": {
+        "10": 59,
+        "30": 59,
+        "60": 32
+      },
+      "avg_context_paragraphs": 36.6
+    }
+  }
+}
