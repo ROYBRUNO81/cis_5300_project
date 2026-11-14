@@ -2,6 +2,10 @@
 
 CIS 5300 Term Project, Fall 2026: Bruno Ndiba Mbwaye Roy, Sheila Nalubega, Hansheng Zhu
 
+## Milestone 2 work
+
+Implementation and experiments are on the `ms2` branch. See [MS2_ADR.md](MS2_ADR.md) for the live completion checklist and architecture decisions. M2 dependencies are separate in `requirements-ms2.txt`; model downloads and virtual environments are not committed.
+
 ## Research question
 
 Autocomplete tools mostly look at the few words right before the cursor. When people write a paper or a report, much of what comes next is already written somewhere else in the document, such as the methods section, a results table or an earlier draft. A model that ignores those sources can produce fluent text that contradicts the facts, for example by inventing an accuracy number. It also gives the writer no signal about how far to trust a suggestion.

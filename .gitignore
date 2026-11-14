@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 data/raw/pdfs/
 *.tar.gz
+.models/
+.venv-ms2/
+*.tmp
+.pytest_cache/
