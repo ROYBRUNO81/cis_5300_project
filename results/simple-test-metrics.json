@@ -1,48 +1,48 @@
 {
   "primary_metric": "rougeL_f1",
   "n": 150,
-  "rougeL_precision": 0.10952091010262893,
-  "rougeL_recall": 0.1067767039384691,
-  "rougeL_f1": 0.1079339533828193,
-  "bertscore_precision": 0.715114684899648,
-  "bertscore_recall": 0.7131596843401591,
-  "bertscore_f1": 0.7136913951237996,
+  "rougeL_precision": 0.109520910102629,
+  "rougeL_recall": 0.10677670393846912,
+  "rougeL_f1": 0.10793395338281937,
+  "bertscore_precision": 0.7151147941748301,
+  "bertscore_recall": 0.7131598019599914,
+  "bertscore_f1": 0.713691508769989,
   "exact_length": 1.0,
   "prediction_words": 28.533333333333335,
   "empty": 0.0,
   "by_domain": {
     "cv": {
       "n": 50,
-      "rougeL_precision": 0.11353449961236393,
-      "rougeL_recall": 0.10897781991505819,
-      "rougeL_f1": 0.11094071930527512,
-      "bertscore_precision": 0.7124364960193634,
-      "bertscore_recall": 0.7156843209266662,
-      "bertscore_f1": 0.7135505378246307,
+      "rougeL_precision": 0.1135344996123639,
+      "rougeL_recall": 0.10897781991505816,
+      "rougeL_f1": 0.11094071930527508,
+      "bertscore_precision": 0.7124365949630738,
+      "bertscore_recall": 0.7156844305992126,
+      "bertscore_f1": 0.7135506474971771,
       "exact_length": 1.0,
       "prediction_words": 29.6,
       "empty": 0.0
     },
     "ml": {
       "n": 50,
-      "rougeL_precision": 0.1120871001449422,
+      "rougeL_precision": 0.11208710014494219,
       "rougeL_recall": 0.1076754475602777,
       "rougeL_f1": 0.10970925699453601,
-      "bertscore_precision": 0.7149435305595397,
-      "bertscore_recall": 0.7076785433292389,
-      "bertscore_f1": 0.7109171617031097,
+      "bertscore_precision": 0.7149436509609223,
+      "bertscore_recall": 0.7076786649227143,
+      "bertscore_f1": 0.7109172809123993,
       "exact_length": 1.0,
       "prediction_words": 25.4,
       "empty": 0.0
     },
     "nlp": {
       "n": 50,
-      "rougeL_precision": 0.1029411305505809,
-      "rougeL_recall": 0.10367684434007146,
+      "rougeL_precision": 0.10294113055058089,
+      "rougeL_recall": 0.10367684434007148,
       "rougeL_f1": 0.10315188384864699,
-      "bertscore_precision": 0.7179640281200409,
-      "bertscore_recall": 0.7161161887645722,
-      "bertscore_f1": 0.7166064858436585,
+      "bertscore_precision": 0.7179641366004944,
+      "bertscore_recall": 0.7161163103580475,
+      "bertscore_f1": 0.7166065979003906,
       "exact_length": 1.0,
       "prediction_words": 30.6,
       "empty": 0.0
@@ -51,24 +51,24 @@
   "by_target_words": {
     "10": {
       "n": 59,
-      "rougeL_precision": 0.08729914153642966,
-      "rougeL_recall": 0.08614963191234375,
-      "rougeL_f1": 0.08638786748810795,
-      "bertscore_precision": 0.721202757398961,
-      "bertscore_recall": 0.7112587771173251,
-      "bertscore_f1": 0.7159067351939314,
+      "rougeL_precision": 0.08729914153642968,
+      "rougeL_recall": 0.08614963191234377,
+      "rougeL_f1": 0.08638786748810798,
+      "bertscore_precision": 0.7212029139874345,
+      "bertscore_recall": 0.7112589337057986,
+      "bertscore_f1": 0.7159068837004193,
       "exact_length": 1.0,
       "prediction_words": 10.0,
       "empty": 0.0
     },
     "30": {
       "n": 59,
-      "rougeL_precision": 0.1341256172158349,
-      "rougeL_recall": 0.13005994636745843,
+      "rougeL_precision": 0.13412561721583488,
+      "rougeL_recall": 0.13005994636745846,
       "rougeL_f1": 0.13190801312461062,
-      "bertscore_precision": 0.7224257143877321,
-      "bertscore_recall": 0.7185890007827241,
-      "bertscore_f1": 0.7200174018488092,
+      "bertscore_precision": 0.7224257962178375,
+      "bertscore_recall": 0.7185891007972975,
+      "bertscore_f1": 0.7200174968121416,
       "exact_length": 1.0,
       "prediction_words": 30.0,
       "empty": 0.0
@@ -76,11 +76,11 @@
     "60": {
       "n": 32,
       "rougeL_precision": 0.10512736715658563,
-      "rougeL_recall": 0.10187938975818858,
+      "rougeL_recall": 0.1018793897581886,
       "rougeL_f1": 0.10345737660226585,
-      "bertscore_precision": 0.6904100906103849,
-      "bertscore_recall": 0.70665417984128,
-      "bertscore_f1": 0.6979432869702578,
+      "bertscore_precision": 0.6904101632535458,
+      "bertscore_recall": 0.7066542580723763,
+      "bertscore_f1": 0.6979433707892895,
       "exact_length": 1.0,
       "prediction_words": 60.0,
       "empty": 0.0
@@ -91,12 +91,12 @@
   },
   "confidence_intervals_95": {
     "rougeL_f1": [
-      0.09640864517057127,
-      0.11875048637861943
+      0.09640864517057134,
+      0.11875048637861955
     ],
     "bertscore_f1": [
-      0.7080640742381413,
-      0.719748273263375
+      0.7080641927421093,
+      0.7197483793596426
     ]
   },
   "configuration": {
@@ -111,12 +111,12 @@
     "bootstrap_papers": 1000,
     "seed": 5300,
     "gold_sha256": "66693a6c5d406b52464786fca01d94b6daa5232fca34c5056e31f58e1b882623",
-    "predictions_sha256": "31426b601e5ee81863dd04c865deedac2c167ea732c0e52ae751b7ad2b2027b8",
+    "predictions_sha256": "c3ee250dc92fe5db6a11479b3103195b3eb2dbf1da5a9c10e6ab56145dd38344",
     "versions": {
       "rouge-score": "0.1.2",
       "bert-score": "0.3.13",
       "transformers": "4.57.3",
-      "torch": "2.7.0"
+      "torch": "2.14.1+cu130"
     }
   }
 }

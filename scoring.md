@@ -56,7 +56,7 @@ Example measured simple-baseline output (abridged):
   "primary_metric": "rougeL_f1",
   "n": 150,
   "rougeL_f1": 0.1079339534,
-  "bertscore_f1": 0.7136913951,
+  "bertscore_f1": 0.7136915088,
   "exact_length": 1.0,
   "empty": 0.0
 }

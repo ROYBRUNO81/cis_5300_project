@@ -1,25 +1,34 @@
 # Strong baseline: frozen prefix-only Qwen2.5-1.5B
 
-**Status: implemented; the complete GPU test evaluation is pending. No strong-baseline score is claimed yet.** The Colab workflow replaces this draft with measured results and sample output once all 150 predictions have been scored.
+I use the public **base** checkpoint `Qwen/Qwen2.5-1.5B`, not an instruction-tuned model. A frozen causal LM extends the paragraph prefix directly, without a chat template, instructions, retrieved passages, or fine-tuning. This standard pretrained-LM baseline is supported by the [Qwen2.5 technical report](https://arxiv.org/abs/2412.15115). It is not a reproduction of REPLUG's retriever training.
 
-## Model and decoding
-
-Use the public **base** checkpoint `Qwen/Qwen2.5-1.5B`, frozen, without a chat template, instructions, retrieval, or fine-tuning. The input is only the partially written paragraph. This is a standard pretrained causal-LM baseline, supported by the [Qwen2.5 technical report](https://arxiv.org/abs/2412.15115), not a reproduction of REPLUG's retriever training.
-
-Decode greedily with one beam, seed 5300, at most 2,048 prefix tokens and 256 new tokens. The task's output budget is **words**, not subword tokens. Stop after one more whitespace word than requested appears, then retain the first 10/30/60 complete words. Early EOS or a token-budget limit can yield a shorter suggestion; score and report that rather than padding with reference text.
-
-The output includes the actual generated continuation, a raw mean emitted-subword probability, and a run fingerprint. This confidence is not calibrated acceptability. Save checkpoint revisions, exact package versions, device/precision, input hashes, and runtime in the sidecar JSON. Generation outputs are saved atomically after each example; `--resume` requires the same configuration.
+Greedy decoding uses one beam, seed 5300, at most 2,048 prefix tokens and 256 new tokens. To avoid counting a partial last word, generation stops after more than the requested number of whitespace words appears, and the output is trimmed to the first 10/30/60 words. Early EOS/token-budget limits can yield shorter suggestions; we report length adherence rather than padding them. Mean probabilities cover the emitted subword tokens and are raw diagnostics, not calibrated acceptance probabilities. The model is loaded directly on the chosen device to reduce transient memory.
 
 ## Run
 
-Recommended: open `notebooks/MS2_Colab.ipynb` with a Colab GPU. Or run from the repository root:
-
 ```bash
-pip install -r requirements-ms2.txt
 python scripts/download_models.py --output .models
 python strong-baseline.py --inputs data/processed/test.jsonl --output results/strong-test.jsonl --model .models/qwen --device cuda
 python score.py --gold data/processed/test.jsonl --predictions results/strong-test.jsonl --bert-model .models/bertscore --device cuda --output results/strong-test-metrics.json --per-example results/strong-test-scores.jsonl
-python scripts/build_ms2_deliverables.py
 ```
 
-The complete notebook uses a separate run folder, preserves per-example outputs, builds the PDF report, validates the package, and downloads a zip. No test gold/context enters the model prompt. No model settings are chosen using test scores. The local 8 GB Mac encountered swap/disk pressure; use a GPU with sufficient memory instead. Weights are not committed or included in the submission.
+Use `--device auto`/`mps`/`cpu` where appropriate. A Colab GPU is recommended; the local 8 GB Mac encountered memory/swap pressure. `notebooks/MS2_Colab.ipynb` runs the complete workflow. `--resume` continues the **same** saved configuration; a changed model, input hash, or script is rejected. Output is saved atomically after each example. Keep outputs before disconnecting Colab. Downloaded weights are not committed.
+
+## Measured full-test results
+
+| System | ROUGE-L P | ROUGE-L R | ROUGE-L F1 | BERTScore P | BERTScore R | BERTScore F1 | Exact word length |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Trigram | 0.1095 | 0.1068 | 0.1079 | 0.7151 | 0.7132 | 0.7137 | 100.0% |
+| Qwen2.5-1.5B | 0.2343 | 0.2226 | 0.2262 | 0.7963 | 0.7776 | 0.7865 | 94.7% |
+
+See `results/strong-test.jsonl.run.json` for the actual checkpoint revision, precision, hardware, seed, software versions, input hashes, and generation time. See `results/strong-test-metrics.json` for the scorer settings, paper-bootstrap intervals, and breakdowns. The baseline was chosen before scoring, not selected by test performance.
+
+## Actual sample output
+
+Example `2405.14039:0` (30 requested words):
+
+```json
+{"example_id": "2405.14039:0", "prediction": "as the OOD dataset, which is far from the ID dataset in terms of the distribution of the training data. (ii) Near-shift OOD scenario, we select the MATH [11] dataset", "confidence": 0.6106921394413811, "confidence_type": "uncalibrated_mean_subword_probability", "system": "qwen_prefix_only", "run_id": "56ccf21ff29c131aa467048bf07c58f9ac43b896638754feaebe6d02ad92ebc7", "generated_tokens": 43, "retained_tokens": 42, "mean_log_probability": -0.7075012092760257, "elapsed_seconds": 6.728458571000033}
+```
+
+These are single-reference, single-run similarity results. They do not establish calibrated confidence, factual grounding, or robustness to pretrained-data overlap.

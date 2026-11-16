@@ -1,31 +1,31 @@
 # Simple baseline: trigram with hard backoff
 
-Train a whitespace-word trigram on deduplicated paragraphs from the **training papers only**. For a seen two-word context, choose its most frequent continuation; otherwise back off to one word, then to the unigram mode. Ties are lexicographic. Generate exactly the requested 10/30/60 words. The program rejects overlapping training/evaluation paper IDs. No test gold or test context is used to generate output.
+I fit a whitespace-word trigram model using only the 237 training papers. Training contexts are deduplicated by `(paper_id, paragraph_index)`; a full training-context paragraph takes precedence over its shorter prefix-plus-target span. Two BOS markers mark paragraph starts. At each step, select the most frequent continuation of the last two words. If that context is unseen, back off to the last word, then to the unigram mode. Ties use lexicographic order. The model emits exactly the requested number of words and never reads the test target or test context for generation. Training/evaluation paper overlap is rejected.
 
-Training contexts are deduplicated by paper and paragraph index. A full training-context paragraph takes precedence over a shorter prefix-plus-target span for that same paragraph. Two BOS markers initialize each paragraph; no EOS stop is used in this fixed-word-budget baseline. The saved mean selected-word probability is an uncalibrated diagnostic, not a writer-acceptance probability.
+This is a simple open-ended-generation baseline, not a majority-class classifier. No model selection or tuning uses test scores. Hard backoff is not interpolated smoothing. The saved mean word probability is an uncalibrated diagnostic, not the probability a writer accepts the continuation.
 
-## Run from the repository root
+## Run
 
 ```bash
 python simple-baseline.py --train data/processed/train.jsonl --inputs data/processed/test.jsonl --output results/simple-test.jsonl
 python score.py --gold data/processed/test.jsonl --predictions results/simple-test.jsonl --bert-model .models/bertscore --output results/simple-test-metrics.json --per-example results/simple-test-scores.jsonl
 ```
 
-## Measured test results
+## Measured full-test results
 
-All **150** examples from 30 papers; 50 examples each in NLP, ML, and CV. Scores are fractions.
+| System | ROUGE-L P | ROUGE-L R | ROUGE-L F1 | BERTScore P | BERTScore R | BERTScore F1 | Exact word length |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Trigram | 0.1095 | 0.1068 | 0.1079 | 0.7151 | 0.7132 | 0.7137 | 100.0% |
+| Qwen2.5-1.5B | 0.2343 | 0.2226 | 0.2262 | 0.7963 | 0.7776 | 0.7865 | 94.7% |
 
-| Metric | Precision | Recall | F1 |
-|---|---:|---:|---:|
-| ROUGE-L | 0.1095 | 0.1068 | 0.1079 |
-| BERTScore | 0.7151 | 0.7132 | 0.7137 |
-
-Exact requested length: **100%**; empty outputs: **0%**. BERTScore uses five-layer DistilBERT, no IDF weighting or rescaling. See `scoring.md` for definitions and `results/simple-test-metrics.json` for configuration, hashes, bootstrap intervals, and breakdowns. These are reference-similarity scores, not factuality or calibration results.
+The table includes both baselines for comparison. See `results/simple-test-metrics.json` for paper-bootstrap intervals and domain/length breakdowns. These metrics quantify reference similarity, not factual correctness. Repetition is a known limitation of greedy count-based generation.
 
 ## Actual sample output
 
+Example `2405.14039:0` (30 requested words):
+
 ```json
-{"example_id": "2405.14039:0", "prediction": "is a set of the model to learn the best of our proposed method is to use the same as the number of parameters and the corresponding UEFA EURO 2020", "confidence": 0.19863489500787113, "confidence_type": "uncalibrated_mean_word_probability", "system": "trigram_backoff"}
+{"example_id": "2405.14039:0", "prediction": "is a set of the model to learn the best of our proposed method is to use the same as the number of parameters and the corresponding UEFA EURO 2020", "confidence": 0.19863489500787115, "confidence_type": "uncalibrated_mean_word_probability", "system": "trigram_backoff"}
 ```
 
-Greedy trigram generation often repeats common phrases and cannot use long-range dependencies. The strong baseline comparison remains pending the Colab run; no strong score is claimed here. The report builder refreshes this file with the full comparison once both evaluations are complete.
+The program writes one JSON object per test ID with `prediction`, raw `confidence`, and its unit/type. Output order is aligned by ID by the scorer.

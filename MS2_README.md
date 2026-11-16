@@ -44,7 +44,14 @@ The report builder refuses incomplete or mismatched measurements. It will not in
 
 ## Current measured evidence
 
-The complete local simple-baseline test run is saved in `results/`: ROUGE-L F1 **0.107934**, BERTScore F1 **0.713691**, and exact requested word length **100%**. Strong-baseline scores and the final report remain pending until the GPU notebook completes. Do not submit a draft claiming both runs are finished.
+Both complete Colab evaluations are saved in `results/` and have been checked locally against their hashes and per-example scores:
+
+| System | Test examples | ROUGE-L F1 | BERTScore F1 | Exact requested word length |
+|---|---:|---:|---:|---:|
+| Trigram | 150 | 0.107934 | 0.713692 | 100.00% |
+| Frozen Qwen2.5-1.5B | 150 | 0.226200 | 0.786479 | 94.67% |
+
+The final two-page report is [report/milestone2.pdf](report/milestone2.pdf). The eight shorter Qwen outputs are included in all scores; none is silently dropped or padded. Full precision/recall, domain/length breakdowns, uncertainty intervals, model revision, and runtime provenance are preserved. All 15 tests pass. Run `python scripts/package_ms2.py` to recreate the submission zip from these artifacts.
 
 ## Human-label scope
 

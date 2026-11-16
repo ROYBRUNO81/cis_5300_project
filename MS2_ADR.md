@@ -13,12 +13,12 @@
 - [x] Add and validate a Colab GPU notebook for the complete M2 workflow.
 - [x] Write metric definitions and CLI examples in `scoring.md`.
 - [x] Write `simple-baseline.md` with actual output and full-test measurements.
-- [x] Write strong-baseline usage documentation, clearly marking results as pending.
-- [ ] Complete strong-baseline inference on all 150 test examples.
-- [ ] Measure both baselines with the same ROUGE-L and BERTScore configuration.
-- [ ] Write `scoring.md`, `simple-baseline.md`, and `strong-baseline.md` with actual results and commands.
-- [ ] Write and compile the required 1–2 page report.
-- [ ] Verify deliverables, publish the branch, and prepare a submission archive.
+- [x] Write strong-baseline usage documentation and replace the initial pending draft with actual results.
+- [x] Complete strong-baseline inference on all 150 test examples.
+- [x] Measure both baselines with the same ROUGE-L and BERTScore configuration.
+- [x] Write `scoring.md`, `simple-baseline.md`, and `strong-baseline.md` with actual results and commands.
+- [x] Generate and verify the required two-page report.
+- [x] Verify deliverables, publish the branch, and prepare a submission archive.
 
 Tick an item only after its implementation or measurement is verified. Do not treat generated code as a completed experiment.
 
@@ -50,9 +50,11 @@ The branch now contains the measured full-test predictions and scores: ROUGE-L F
 
 ## ADR-004 — strong baseline
 
-**Status:** implementation complete; full evaluation pending.
+**Status:** implemented and evaluated on all 150 test examples.
 
 **Execution update, 2026-11-16:** local inference on the 8 GB Mac encountered memory/swap pressure. An incomplete local output is retained only in ignored `runs/`, not presented as a test result. Continue on Colab GPU using `notebooks/MS2_Colab.ipynb`; retain the same model/decoding settings. Direct-device loading avoids a simultaneous CPU/GPU parameter copy. Actual software versions are logged; the dependency range permits Colab's existing PyTorch >=2.7 rather than forcing a large CUDA downgrade.
+
+**Completion update, 2026-11-16:** the user returned the Colab archive. It contains a complete CUDA float16 run of all 150 examples, checkpoint revision `8faed761d45a263340a0528343f099c05c9a4323`, and 187.6 seconds of recorded generation time (excluding model loading). Measured ROUGE-L F1 is **0.226200** and BERTScore F1 is **0.786479**. Exact word-length adherence is **142/150 (94.67%)**; eight suggestions were shorter, none hit the 256-token cap, and all are retained in scoring. No suggestion is empty. These are similarity results, not proof of factuality or calibration.
 
 Use the public **base** checkpoint `Qwen/Qwen2.5-1.5B`, frozen, without fine-tuning, chat formatting, instructions, or retrieval. Input is only the paragraph prefix. Greedy decoding, one beam, seed 5300, at most 2,048 input tokens and 256 newly generated tokens. Stop after observing one more whitespace word than requested, then retain the first 10/30/60 complete words. Early EOS or a token-budget limit can produce a short output and must be reported, not padded with gold text. Save model revision, input hashes, configuration, and resumable predictions.
 
@@ -72,4 +74,4 @@ Store the mean probability of emitted units as a raw diagnostic: words for the t
 
 Keep code and small measured outputs on `ms2`. Do not commit model weights, virtual environments, caches, access tokens, or raw PDFs. Preserve the existing MS1 files and dependencies; install M2 dependencies using `requirements-ms2.txt`. Record model revisions/checksums, software versions, seeds, and hardware. The report must clearly distinguish measured results from planned extensions. No training runs or paid APIs are required for these baselines.
 
-The report builder and package validator are implemented. A synthetic temporary fixture verifies that the PDF layout fits **two pages**; it is a unit test, not a benchmark measurement. Real strong-baseline documentation and the final report are generated only after a complete 150-example GPU run with matching prediction/gold hashes. No final report or full-completion checkbox is claimed before that run.
+The real Colab report has been verified to contain **two pages**. Full-test IDs, dataset/prediction/script hashes, word-length adherence, and score aggregation were checked locally; ROUGE-L was independently recomputed. Both baselines use the same DistilBERT revision and scorer settings. The 15 automated tests also pass; their synthetic report-layout fixture is not a benchmark result. The final archive includes actual measured predictions and metrics, formal scoring definitions, usage documentation, and the report. Human calibration remains an explicitly deferred extension, not an unfinished M2 baseline requirement.

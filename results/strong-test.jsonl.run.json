@@ -1,0 +1,25 @@
+{
+  "system": "qwen_prefix_only",
+  "model": "Qwen/Qwen2.5-1.5B",
+  "revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "device": "cuda",
+  "dtype": "torch.float16",
+  "do_sample": false,
+  "num_beams": 1,
+  "max_input_tokens": 2048,
+  "max_new_tokens": 256,
+  "seed": 5300,
+  "inputs_sha256": "66693a6c5d406b52464786fca01d94b6daa5232fca34c5056e31f58e1b882623",
+  "script_sha256": "9be479d07bc25e7eb4290880ec339a72f7ed46829d2d47ff8798965acb565ae2",
+  "versions": {
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "tokenizers": "0.22.2"
+  },
+  "prompt": "raw paragraph prefix; no instruction, retrieval, target, or chat template",
+  "run_id": "56ccf21ff29c131aa467048bf07c58f9ac43b896638754feaebe6d02ad92ebc7",
+  "status": "complete",
+  "n": 150,
+  "wall_seconds_this_invocation": 187.84341349299996,
+  "generation_seconds": 187.60533276399974
+}
