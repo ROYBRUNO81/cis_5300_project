@@ -7,3 +7,5 @@ data/raw/pdfs/
 .venv-ms2/
 *.tmp
 .pytest_cache/
+runs/
+MS2_submission.zip

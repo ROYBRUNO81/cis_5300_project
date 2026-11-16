@@ -8,7 +8,12 @@
 - [x] Implement a training-only trigram/backoff simple baseline.
 - [x] Run the simple baseline on all 150 test examples (ROUGE-L measured).
 - [x] Implement frozen prefix-only Qwen2.5-1.5B generation.
-- [ ] Test scoring, leakage guards, generation-length handling, and calibration edge cases.
+- [x] Test scoring, leakage guards, generation-length handling, and calibration edge cases (15 tests passed).
+- [x] Measure simple-baseline BERTScore on all 150 test examples.
+- [x] Add and validate a Colab GPU notebook for the complete M2 workflow.
+- [x] Write metric definitions and CLI examples in `scoring.md`.
+- [x] Write `simple-baseline.md` with actual output and full-test measurements.
+- [x] Write strong-baseline usage documentation, clearly marking results as pending.
 - [ ] Complete strong-baseline inference on all 150 test examples.
 - [ ] Measure both baselines with the same ROUGE-L and BERTScore configuration.
 - [ ] Write `scoring.md`, `simple-baseline.md`, and `strong-baseline.md` with actual results and commands.
@@ -35,15 +40,19 @@ Primary score: example-macro ROUGE-L F1 with the official `rouge-score` package'
 
 ## ADR-003 — simple baseline
 
-**Status:** implemented; full-test ROUGE-L measured, BERTScore pending.
+**Status:** implemented and evaluated on all 150 test examples.
 
-Train a whitespace-word trigram model on deduplicated training-paper paragraphs available through training contexts and prefix–target spans. Use greedy maximum-count continuation, backing off from trigram to bigram to unigram when the context is unseen. Resolve ties lexicographically. Emit exactly the requested number of words. No development/test text is used for fitting. Test ROUGE-L F1 from the initial run: 0.107934; rerun and archive results in this branch before final reporting.
+Train a whitespace-word trigram model on deduplicated training-paper paragraphs available through training contexts and prefix–target spans. Use greedy maximum-count continuation, backing off from trigram to bigram to unigram when the context is unseen. Resolve ties lexicographically. Emit exactly the requested number of words. No development/test text is used for fitting. The full run and score artifacts are archived in this branch.
+
+The branch now contains the measured full-test predictions and scores: ROUGE-L F1 **0.107934**, BERTScore F1 **0.713691**, and 100% exact requested word length. Full precision/recall and group breakdowns are in `results/simple-test-metrics.json`.
 
 **Reason:** a majority-label classifier is not meaningful for open-ended generation. This is the simple language-model baseline promised in the proposal.
 
 ## ADR-004 — strong baseline
 
 **Status:** implementation complete; full evaluation pending.
+
+**Execution update, 2026-11-16:** local inference on the 8 GB Mac encountered memory/swap pressure. An incomplete local output is retained only in ignored `runs/`, not presented as a test result. Continue on Colab GPU using `notebooks/MS2_Colab.ipynb`; retain the same model/decoding settings. Direct-device loading avoids a simultaneous CPU/GPU parameter copy. Actual software versions are logged; the dependency range permits Colab's existing PyTorch >=2.7 rather than forcing a large CUDA downgrade.
 
 Use the public **base** checkpoint `Qwen/Qwen2.5-1.5B`, frozen, without fine-tuning, chat formatting, instructions, or retrieval. Input is only the paragraph prefix. Greedy decoding, one beam, seed 5300, at most 2,048 input tokens and 256 newly generated tokens. Stop after observing one more whitespace word than requested, then retain the first 10/30/60 complete words. Early EOS or a token-budget limit can produce a short output and must be reported, not padded with gold text. Save model revision, input hashes, configuration, and resumable predictions.
 
@@ -62,3 +71,5 @@ Store the mean probability of emitted units as a raw diagnostic: words for the t
 **Status:** accepted.
 
 Keep code and small measured outputs on `ms2`. Do not commit model weights, virtual environments, caches, access tokens, or raw PDFs. Preserve the existing MS1 files and dependencies; install M2 dependencies using `requirements-ms2.txt`. Record model revisions/checksums, software versions, seeds, and hardware. The report must clearly distinguish measured results from planned extensions. No training runs or paid APIs are required for these baselines.
+
+The report builder and package validator are implemented. A synthetic temporary fixture verifies that the PDF layout fits **two pages**; it is a unit test, not a benchmark measurement. Real strong-baseline documentation and the final report are generated only after a complete 150-example GPU run with matching prediction/gold hashes. No final report or full-completion checkbox is claimed before that run.

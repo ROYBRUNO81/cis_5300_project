@@ -1,0 +1,122 @@
+{
+  "primary_metric": "rougeL_f1",
+  "n": 150,
+  "rougeL_precision": 0.10952091010262893,
+  "rougeL_recall": 0.1067767039384691,
+  "rougeL_f1": 0.1079339533828193,
+  "bertscore_precision": 0.715114684899648,
+  "bertscore_recall": 0.7131596843401591,
+  "bertscore_f1": 0.7136913951237996,
+  "exact_length": 1.0,
+  "prediction_words": 28.533333333333335,
+  "empty": 0.0,
+  "by_domain": {
+    "cv": {
+      "n": 50,
+      "rougeL_precision": 0.11353449961236393,
+      "rougeL_recall": 0.10897781991505819,
+      "rougeL_f1": 0.11094071930527512,
+      "bertscore_precision": 0.7124364960193634,
+      "bertscore_recall": 0.7156843209266662,
+      "bertscore_f1": 0.7135505378246307,
+      "exact_length": 1.0,
+      "prediction_words": 29.6,
+      "empty": 0.0
+    },
+    "ml": {
+      "n": 50,
+      "rougeL_precision": 0.1120871001449422,
+      "rougeL_recall": 0.1076754475602777,
+      "rougeL_f1": 0.10970925699453601,
+      "bertscore_precision": 0.7149435305595397,
+      "bertscore_recall": 0.7076785433292389,
+      "bertscore_f1": 0.7109171617031097,
+      "exact_length": 1.0,
+      "prediction_words": 25.4,
+      "empty": 0.0
+    },
+    "nlp": {
+      "n": 50,
+      "rougeL_precision": 0.1029411305505809,
+      "rougeL_recall": 0.10367684434007146,
+      "rougeL_f1": 0.10315188384864699,
+      "bertscore_precision": 0.7179640281200409,
+      "bertscore_recall": 0.7161161887645722,
+      "bertscore_f1": 0.7166064858436585,
+      "exact_length": 1.0,
+      "prediction_words": 30.6,
+      "empty": 0.0
+    }
+  },
+  "by_target_words": {
+    "10": {
+      "n": 59,
+      "rougeL_precision": 0.08729914153642966,
+      "rougeL_recall": 0.08614963191234375,
+      "rougeL_f1": 0.08638786748810795,
+      "bertscore_precision": 0.721202757398961,
+      "bertscore_recall": 0.7112587771173251,
+      "bertscore_f1": 0.7159067351939314,
+      "exact_length": 1.0,
+      "prediction_words": 10.0,
+      "empty": 0.0
+    },
+    "30": {
+      "n": 59,
+      "rougeL_precision": 0.1341256172158349,
+      "rougeL_recall": 0.13005994636745843,
+      "rougeL_f1": 0.13190801312461062,
+      "bertscore_precision": 0.7224257143877321,
+      "bertscore_recall": 0.7185890007827241,
+      "bertscore_f1": 0.7200174018488092,
+      "exact_length": 1.0,
+      "prediction_words": 30.0,
+      "empty": 0.0
+    },
+    "60": {
+      "n": 32,
+      "rougeL_precision": 0.10512736715658563,
+      "rougeL_recall": 0.10187938975818858,
+      "rougeL_f1": 0.10345737660226585,
+      "bertscore_precision": 0.6904100906103849,
+      "bertscore_recall": 0.70665417984128,
+      "bertscore_f1": 0.6979432869702578,
+      "exact_length": 1.0,
+      "prediction_words": 60.0,
+      "empty": 0.0
+    }
+  },
+  "calibration": {
+    "status": "not evaluated: no human acceptability labels supplied"
+  },
+  "confidence_intervals_95": {
+    "rougeL_f1": [
+      0.09640864517057127,
+      0.11875048637861943
+    ],
+    "bertscore_f1": [
+      0.7080640742381413,
+      0.719748273263375
+    ]
+  },
+  "configuration": {
+    "rouge_stemmer": true,
+    "bertscore": {
+      "model": "distilbert/distilbert-base-uncased",
+      "layers": 5,
+      "idf": false,
+      "rescale_with_baseline": false,
+      "revision": "12040accade4e8a0f71eabdb258fecc2e7e948be"
+    },
+    "bootstrap_papers": 1000,
+    "seed": 5300,
+    "gold_sha256": "66693a6c5d406b52464786fca01d94b6daa5232fca34c5056e31f58e1b882623",
+    "predictions_sha256": "31426b601e5ee81863dd04c865deedac2c167ea732c0e52ae751b7ad2b2027b8",
+    "versions": {
+      "rouge-score": "0.1.2",
+      "bert-score": "0.3.13",
+      "transformers": "4.57.3",
+      "torch": "2.7.0"
+    }
+  }
+}

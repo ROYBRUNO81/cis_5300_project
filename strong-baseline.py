@@ -1,5 +1,6 @@
 import argparse
 import hashlib
+from importlib.metadata import version
 import json
 import math
 import os
@@ -65,8 +66,9 @@ def main():
     tokenizer.truncation_side = 'left'
     dtype = torch.float32 if device == 'cpu' else torch.float16
     model = AutoModelForCausalLM.from_pretrained(args.model, revision=args.revision, dtype=dtype,
-                                               low_cpu_mem_usage=True, attn_implementation='sdpa')
-    model.to(device).eval().requires_grad_(False)
+                                               low_cpu_mem_usage=True, device_map={'': device},
+                                               attn_implementation='sdpa')
+    model.eval().requires_grad_(False)
     revision = args.revision or getattr(model.config, '_commit_hash', None)
     model_id = args.model
     manifest = Path(args.model) / 'download_manifest.json'
@@ -77,6 +79,7 @@ def main():
               'device': device, 'dtype': str(dtype), 'do_sample': False, 'num_beams': 1,
               'max_input_tokens': args.max_input_tokens, 'max_new_tokens': args.max_new_tokens,
               'seed': args.seed, 'inputs_sha256': digest(args.inputs), 'script_sha256': digest(__file__),
+              'versions': {package: version(package) for package in ['torch', 'transformers', 'tokenizers']},
               'prompt': 'raw paragraph prefix; no instruction, retrieval, target, or chat template'}
     run_id = hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest()
     predictions = []

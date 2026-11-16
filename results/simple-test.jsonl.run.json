@@ -1,0 +1,9 @@
+{
+  "system": "trigram_backoff",
+  "n": 150,
+  "training_examples": 1182,
+  "unique_training_paragraphs": 11957,
+  "train_sha256": "2410cb85a6693ec61b6451e265a443bae834ba157474a9d3b7e58ab3f68136db",
+  "inputs_sha256": "66693a6c5d406b52464786fca01d94b6daa5232fca34c5056e31f58e1b882623",
+  "elapsed_seconds": 2.248615417003748
+}
