@@ -88,10 +88,28 @@ for system in ['simple', 'strong']:
 from pypdf import PdfReader
 print('Report pages:', len(PdfReader('report/milestone2.pdf').pages))
 ''')
-markdown('## Download before ending the runtime\nUpload the downloaded archive back to our project workspace so the measured results and report can be reviewed and committed to `ms2`. The notebook does not update the repository checklist automatically; completion must be verified first.')
+markdown('''## Download before ending the runtime
+Run this cell manually after the package step finishes. It validates `/content/cis_5300_project/MS2_submission.zip` and requests a browser download. Your browser chooses the local folder (usually Downloads); Colab cannot write directly to your Mac workspace. Allow downloads if the browser blocks the request. If no download appears, use Colab's left Files sidebar, refresh it, open `cis_5300_project`, and choose **Download** from the zip's three-dot menu. Do not disconnect until you have the archive.
+
+Upload the downloaded archive back to this chat so the measured results and report can be reviewed and committed to `ms2`. Printing “requested” does not prove that the browser saved it.''')
 code('''
+from pathlib import Path
+import hashlib
+import zipfile
 from google.colab import files
-files.download('MS2_submission.zip')
+
+archive = Path('/content/cis_5300_project/MS2_submission.zip')
+if not archive.is_file() or archive.stat().st_size == 0:
+    raise FileNotFoundError(f'{archive} is missing or empty. Run the build/package cell first and check its errors.')
+with zipfile.ZipFile(archive) as package:
+    bad_file = package.testzip()
+    if bad_file is not None:
+        raise ValueError(f'Archive integrity check failed: {bad_file}')
+print('Archive ready:', archive)
+print(f'Size: {archive.stat().st_size / 1e6:.2f} MB')
+print('SHA-256:', hashlib.sha256(archive.read_bytes()).hexdigest())
+files.download(str(archive))
+print('Browser download requested. Confirm MS2_submission.zip appears in your browser downloads before disconnecting.')
 ''')
 notebook = {'cells': cells, 'metadata': {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                                        'language_info': {'name': 'python'}, 'accelerator': 'GPU'},
