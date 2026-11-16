@@ -4,7 +4,52 @@ CIS 5300 Term Project, Fall 2026: Bruno Ndiba Mbwaye Roy, Sheila Nalubega, Hansh
 
 ## Milestone 2 work
 
-Implementation and experiments are on the `ms2` branch. See [MS2_ADR.md](MS2_ADR.md) for the live completion checklist and architecture decisions. M2 dependencies are separate in `requirements-ms2.txt`; model downloads and virtual environments are not committed.
+**Status: all Milestone 2 deliverables are complete on the `ms2` branch.** We implemented a shared evaluation script, trained a simple trigram baseline, and evaluated a frozen prefix-only Qwen2.5-1.5B baseline on the same 150 test examples. Full inference ran on Colab GPU; measured predictions, scores, and run metadata are committed under [`results/`](results/).
+
+### MS2 checklist
+
+- [x] Implement [`score.py`](score.py), taking system predictions and gold answers with strict example-ID matching.
+- [x] Define ROUGE-L and BERTScore, cite their papers, and provide CLI examples in [`scoring.md`](scoring.md).
+- [x] Implement [`simple-baseline.py`](simple-baseline.py): a training-only trigram language model with backoff.
+- [x] Document simple-baseline usage, sample output, and full-test scores in [`simple-baseline.md`](simple-baseline.md).
+- [x] Integrate and evaluate the frozen pretrained Qwen2.5-1.5B model in [`strong-baseline.py`](strong-baseline.py).
+- [x] Document strong-baseline usage, decoding settings, and measured results in [`strong-baseline.md`](strong-baseline.md).
+- [x] Evaluate both systems with the same metric configuration on all 150 test examples.
+- [x] Prepare the required two-page PDF: [`report/milestone2.pdf`](report/milestone2.pdf).
+- [x] Validate all 15 automated tests, result hashes, complete prediction coverage, and report length.
+- [x] Provide a reproducible Colab workflow and validated submission-packaging script.
+- [x] Publish results and documentation to the `ms2` branch.
+- [ ] Upload the final archive and report to the course submission portal (manual submission).
+
+### Measured test results
+
+| System | Examples | ROUGE-L F1 (primary) | BERTScore F1 | Exact requested word length |
+|---|---:|---:|---:|---:|
+| Trigram with backoff | 150 | 0.107934 | 0.713692 | 100.00% |
+| Frozen Qwen2.5-1.5B | 150 | 0.226200 | 0.786479 | 94.67% |
+
+Both systems generate 10-, 30-, or 60-word continuations from the prefix alone. Qwen's eight shorter outputs remain in the evaluation. BERTScore uses DistilBERT with five encoder layers, without IDF or baseline rescaling. Full precision/recall/F1, paper-bootstrap intervals, and domain/length breakdowns are saved in the metric JSON files. These scores measure reference similarity, not factual support or calibrated acceptability.
+
+### Reproduce and package
+
+See [`MS2_README.md`](MS2_README.md) for setup and exact generation/scoring commands, or run [`notebooks/MS2_Colab.ipynb`](notebooks/MS2_Colab.ipynb) on a GPU runtime. Dependencies are in [`requirements-ms2.txt`](requirements-ms2.txt). Rebuild the submission archive from the committed results with:
+
+```bash
+python scripts/package_ms2.py
+```
+
+This creates `MS2_submission.zip` locally. Model weights, caches, virtual environments, and the generated zip are excluded from Git. Decisions and the detailed implementation checklist are tracked in [`MS2_ADR.md`](MS2_ADR.md).
+
+### Next steps after MS2
+
+These are future project extensions, not missing baseline deliverables:
+
+- [ ] Compare retrieved context against prefix-only and random-context generation.
+- [ ] Collect human labels for relevance, fluency, factual support, and acceptability.
+- [ ] Train a quality predictor and calibrate confidence on held-out development labels.
+- [ ] Evaluate Brier score, calibration error, and confidence-based abstention on separate test labels.
+
+The scorer supports optional labeled confidence evaluation, but calibration and abstention results have not yet been measured.
 
 ## Research question
 

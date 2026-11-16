@@ -22,6 +22,15 @@
 
 Tick an item only after its implementation or measurement is verified. Do not treat generated code as a completed experiment.
 
+### Manual submission and future work
+
+- [ ] Upload the validated archive and report to the course submission portal.
+- [ ] Add retrieval and random-context comparisons after the MS2 baselines.
+- [ ] Collect separate predictor-training, development-calibration, and test acceptability labels.
+- [ ] Measure calibration and confidence-based abstention using those labels.
+
+The first item is a manual hand-in step; the remaining items are later project extensions, not unfinished MS2 requirements. The repository overview and measured result summary are in [README.md](README.md).
+
 ## ADR-001 — dataset and evaluation units
 
 **Status:** accepted, 2026-11-14.
@@ -44,7 +53,7 @@ Primary score: example-macro ROUGE-L F1 with the official `rouge-score` package'
 
 Train a whitespace-word trigram model on deduplicated training-paper paragraphs available through training contexts and prefix–target spans. Use greedy maximum-count continuation, backing off from trigram to bigram to unigram when the context is unseen. Resolve ties lexicographically. Emit exactly the requested number of words. No development/test text is used for fitting. The full run and score artifacts are archived in this branch.
 
-The branch now contains the measured full-test predictions and scores: ROUGE-L F1 **0.107934**, BERTScore F1 **0.713691**, and 100% exact requested word length. Full precision/recall and group breakdowns are in `results/simple-test-metrics.json`.
+The branch now contains the measured full-test predictions and scores: ROUGE-L F1 **0.107934**, BERTScore F1 **0.713692**, and 100% exact requested word length. Full precision/recall and group breakdowns are in `results/simple-test-metrics.json`.
 
 **Reason:** a majority-label classifier is not meaningful for open-ended generation. This is the simple language-model baseline promised in the proposal.
 
