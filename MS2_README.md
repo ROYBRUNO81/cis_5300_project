@@ -57,6 +57,10 @@ Both complete Colab evaluations are saved in `results/` and have been checked lo
 
 The final two-page report is [report/milestone2.pdf](report/milestone2.pdf). The eight shorter Qwen outputs are included in all scores; none is silently dropped or padded. Full precision/recall, domain/length breakdowns, uncertainty intervals, model revision, and runtime provenance are preserved. All 15 tests pass. Run `python scripts/package_ms2.py` to recreate the submission zip from these artifacts.
 
+## Report source
+
+The two-page report follows our proposal's 11-point LaTeX format with 0.9-inch margins and all three teammates in the author block. Edit `report/milestone2.tex` and compile with `tectonic report/milestone2.tex`. Install Tectonic separately to rebuild the report; the deliverable builder uses this source when present. The submission archive includes both the `.tex` source and compiled PDF.
+
 ## Human-label scope
 
 There are no genuine acceptability labels yet. `score.py` implements optional Brier/ECE/risk–coverage checks, but reports them as not evaluated without labels. Neither ROUGE-L nor BERTScore proves factual support. No human judgments, calibration improvements, or abstention results are fabricated for M2.

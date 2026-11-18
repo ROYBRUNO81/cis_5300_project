@@ -30,6 +30,8 @@ def main():
         if result['configuration']['gold_sha256'] != digest(ROOT / 'data/processed/test.jsonl'):
             raise ValueError('metrics/gold mismatch')
     files = set(required + ['README.md', 'data.md'])
+    if (ROOT / 'report/milestone2.tex').exists():
+        files.add('report/milestone2.tex')
     for directory in ['scripts', 'tests', 'notebooks', 'results', 'data/processed']:
         for path in (ROOT / directory).rglob('*'):
             if path.is_file() and '__pycache__' not in path.parts and path.suffix not in ['.pyc', '.tmp']:

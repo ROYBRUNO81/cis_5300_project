@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+import subprocess
 import sys
 from xml.sax.saxutils import escape
 
@@ -189,7 +190,11 @@ These are single-reference, single-run similarity results. They do not establish
     document = SimpleDocTemplate(str(root/'report/milestone2.pdf'), pagesize=letter,
                                  leftMargin=0.55*inch, rightMargin=0.55*inch,
                                  topMargin=0.5*inch, bottomMargin=0.5*inch)
-    document.build(story)
+    latex_source = root / 'report/milestone2.tex'
+    if latex_source.exists():
+        subprocess.run(['tectonic', str(latex_source)], check=True)
+    else:
+        document.build(story)
     (root/'report/milestone2_results.md').write_text('# Milestone 2 measured results\n\n'+table+'\n\nSee milestone2.pdf for the report and results/*-metrics.json for complete measurements.\n')
     print('Built simple-baseline.md, strong-baseline.md, report/milestone2.pdf, and the result summary.')
 

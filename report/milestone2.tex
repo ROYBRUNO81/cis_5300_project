@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,fit,calc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+ 
+% Turn off automatic hyphenation so no line ever breaks with a hyphen
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\sloppy
+ 
+\definecolor{typed}{HTML}{1F2937}
+\definecolor{suggest}{HTML}{15803D}
+\definecolor{panel}{HTML}{F3F4F6}
+\definecolor{edge}{HTML}{9CA3AF}
+\definecolor{accent}{HTML}{2563EB}
+ 
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+ 
+\title{\vspace{-1.6em}\textbf{ContextComplete: Grounded Paragraph Autocompletion\\ That Knows When It Might Be Wrong}}
+\author{Bruno Ndiba Mbwaye Roy \quad Sheila Nalubega\quad 
+Hansheng Zhu \\
+\small CIS 5300 Term Project Milestone 2, Fall 2026}
+\date{\vspace{-2.2em}}
+ 
+\begin{document}
+\maketitle
+\section*{Task and Data}
+We predict the next \textbf{10, 30, or 60 words} of a scientific paragraph from its prefix. The MS1 dataset contains 297 NLP, ML, and computer-vision papers, split by paper into training (1,182 examples; 237 papers), development (150; 30 papers), and test (150; 30 papers).
+
+Using a fixed seed, we select cleaned non-abstract paragraphs of at least 60 words with three earlier paragraphs, choose a feasible target length, and cut at a word boundary leaving at least 15 prefix words. The next original words are the gold continuation. Earlier paragraphs are saved for future retrieval, but both baselines are prefix-only.
+
+We evaluated \textbf{all 150 held-out test examples}, not all dataset splits: 50 per domain, comprising 59 ten-word, 59 thirty-word, and 32 sixty-word targets. Qwen was not fine-tuned; the trigram was fitted on training data. Neither system was selected or tuned using test scores.
+
+\section*{Evaluation}
+Our primary metric is \textbf{example-macro ROUGE-L F1} \cite{lin}. For candidate $C$, reference $R$, and longest common subsequence length $L$, we calculate
+\[
+P_L=\frac{L}{|C|},\qquad R_L=\frac{L}{|R|},\qquad
+F_L=\frac{2P_LR_L}{P_L+R_L},\qquad
+S=\frac{1}{N}\sum_{i=1}^{N}F_{L,i}.
+\]
+Zero-denominator cases receive zero. We use \texttt{rouge-score==0.1.2} with lowercase English alphanumeric tokenization and Porter stemming. Output budgets instead count whitespace-separated words. Only continuations are scored.
+
+Our secondary metric is \textbf{BERTScore} \cite{zhang}. With normalized contextual embeddings $c_i$ and $r_j$, it matches each token to the most similar token in the other sequence:
+\[
+P_B=\frac{1}{|C|}\sum_i\max_j c_i^\top r_j,\qquad
+R_B=\frac{1}{|R|}\sum_j\max_i c_i^\top r_j,\qquad
+F_B=\frac{2P_BR_B}{P_B+R_B}.
+\]
+We macro-average scores using frozen DistilBERT with five encoder layers, no IDF weighting, and no baseline rescaling. This differs from standard RoBERTa-large scoring. The scorer rejects missing, extra, or duplicate IDs. Neither metric directly measures factuality or acceptability.
+
+\section*{Baselines}
+\textbf{Simple: trigram with backoff.} We count word trigrams in deduplicated training-paper paragraphs, greedily choose the most frequent continuation, and back off to bigrams and then unigrams for unseen contexts. Ties are lexicographic. Outputs always match the requested word count; training/evaluation paper overlap is rejected.
+
+\textbf{Strong: frozen Qwen2.5-1.5B.} The public base causal LM \cite{qwen} receives only the raw prefix, without chat formatting, instructions, retrieval, or fine-tuning. Greedy decoding uses one beam, seed 5300, at most 2,048 input tokens and 256 new tokens. Generation normally stops when an extra word begins, then we retain the requested complete words; earlier EOS is allowed. Inference ran on Colab GPU, with revisions and runtime provenance saved.
+
+\section*{Results and Discussion}
+\begin{table}[ht]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+System & RL P & RL R & RL F1 & BS P & BS R & BS F1 & Length \\
+\midrule
+Trigram & .1095 & .1068 & .1079 & .7151 & .7132 & .7137 & 100.0\% \\
+Qwen 1.5B & .2343 & .2226 & \textbf{.2262} & .7963 & .7776 & \textbf{.7865} & 94.7\% \\
+\bottomrule
+\end{tabular}
+\caption{All 150 test examples. RL = ROUGE-L; BS = BERTScore. Length is exact requested-word-count adherence. Scores are fractions; higher is better.}
+\end{table}
+
+Qwen improved ROUGE-L F1 by 0.1183 and BERTScore F1 by 0.0728 over the trigram. Pretrained representations may capture scientific phrasing beyond local counts; this does not establish factuality. Paper-cluster bootstrap 95\% ROUGE-L intervals were [0.0964, 0.1188] and [0.2041, 0.2471], respectively (1,000 resamples; seed 5300), not a paired significance test.
+
+Qwen's ROUGE-L F1 was .2266/.2263/.2257 across CV/ML/NLP and .2522/.2224/.1853 for 10/30/60-word targets. Full breakdowns are saved in the metric JSON files.
+
+\textbf{Stopping behavior.} Eight Qwen outputs were short; none was empty. Of 32 requests for 60 words, 28 reached 60 and four returned 15, 39, 50, and 36 words. These generated only 20, 60, 74, and 45 model tokens, below the 256-token cap, consistent with early EOS; raw terminal token IDs were not saved. Periods do not stop decoding. Exact 60-word outputs are budget-trimmed, not necessarily naturally finished. Short outputs were neither restarted nor padded and remain in evaluation.
+
+\section*{Limitations and Next Steps}
+Only 30 test papers, single references, PDF artifacts, and possible pretraining overlap limit interpretation. We will compare retrieved and random context, then collect separate predictor-training, calibration, and test labels. Brier/ECE/risk--coverage evaluation is implemented but \textbf{not measured on human labels}; raw token probabilities are uncalibrated.
+
+\textbf{Reproduction.} \texttt{scoring.md} gives metric definitions and CLI examples for \texttt{score.py}. Baseline programs, Markdown guides, the Colab notebook, and saved per-example results reproduce the evaluation. Model weights are excluded.
+
+\begingroup
+\small
+\setlength{\parskip}{0pt}
+\begin{thebibliography}{3}
+\setlength{\itemsep}{0pt}
+\bibitem{lin} Lin (2004). ROUGE: A Package for Automatic Evaluation of Summaries. ACL Workshop.
+\bibitem{zhang} Zhang et al. (2020). BERTScore: Evaluating Text Generation with BERT. ICLR.
+\bibitem{qwen} Yang et al. (2025). Qwen2.5 Technical Report. arXiv:2412.15115.
+\end{thebibliography}
+\endgroup
+\end{document}
