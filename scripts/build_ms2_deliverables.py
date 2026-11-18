@@ -94,6 +94,14 @@ Each example comes from a cleaned scientific-paper paragraph with at least 60 wo
 
 Greedy decoding uses one beam, seed 5300, at most 2,048 prefix tokens and 256 new tokens. To avoid counting a partial last word, generation stops after more than the requested number of whitespace words appears, and the output is trimmed to the first 10/30/60 words. Early EOS/token-budget limits can yield shorter suggestions; we report length adherence rather than padding them. Mean probabilities cover the emitted subword tokens and are raw diagnostics, not calibrated acceptance probabilities. The model is loaded directly on the chosen device to reduce transient memory.
 
+## Did generation stop early for 60-word requests?
+
+Of the **32 requests for 60 words**, **28 returned exactly 60 words** and **four stopped short**, returning 15, 39, 50, and 36 words. Their example IDs are `2302.00765:3`, `2402.03750:2`, `2204.11280:3`, and `2206.09068:4`, respectively. All four short outputs remain in the similarity scores.
+
+The model was allowed to continue across sentence boundaries; a period does not stop generation. Normally, our word-budget rule stops decoding once a 61st whitespace word begins, then trims the saved continuation to the first 60 complete words. Thus, an exact 60-word output is a budget-limited completion, not evidence that the model naturally finished at word 60.
+
+Generation can also end before that budget when the model emits an end-of-sequence (EOS) token. The four short cases generated only 20, 60, 74, and 45 model tokens, respectively, all below the 256-new-token cap. They therefore did not exhaust the token budget, and their early termination is consistent with EOS stopping. Raw terminal token IDs were not saved, so the exact EOS token cannot be independently inspected in these artifacts. We did not restart generation, suppress EOS, or pad short outputs to force 60 words.
+
 ## Run
 
 ```bash
