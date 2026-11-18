@@ -8,22 +8,22 @@ The primary number is **example-macro ROUGE-L F1**. Secondary BERTScore F1 measu
 
 ## Formal metric definitions
 
-For one candidate token sequence \(C\) and reference \(R\), let \(L\) be their longest common subsequence length. We use the F1 variant of ROUGE-L:
+For one candidate token sequence $C$ and reference $R$, let $L$ be their longest common subsequence length. We use the F1 variant of ROUGE-L:
 
-\[
+$$
 P_L=\frac{L}{|C|},\qquad R_L=\frac{L}{|R|},\qquad
 F_L=\frac{2P_LR_L}{P_L+R_L}.
-\]
+$$
 
-If a denominator is zero, the corresponding score is zero. `rouge-score==0.1.2` supplies the implementation with `RougeScorer(['rougeL'], use_stemmer=True)`: lowercase English alphanumeric tokenization followed by Porter stemming. This metric tokenization differs from the whitespace word count used for requested output lengths. We score only the generated continuation, not the prefix or context. The dataset score is \(N^{-1}\sum_{i=1}^{N}F_{L,i}\), not ROUGE over concatenated papers. Precision and recall are also macro-averaged and reported.
+If a denominator is zero, the corresponding score is zero. `rouge-score==0.1.2` supplies the implementation with `RougeScorer(['rougeL'], use_stemmer=True)`: lowercase English alphanumeric tokenization followed by Porter stemming. This metric tokenization differs from the whitespace word count used for requested output lengths. We score only the generated continuation, not the prefix or context. The dataset score is $N^{-1}\sum_{i=1}^{N}F_{L,i}$, not ROUGE over concatenated papers. Precision and recall are also macro-averaged and reported.
 
-For BERTScore, independently encode the candidate and reference with a frozen contextual encoder. Let normalized contextual embeddings be \(c_i\) and \(r_j\). Without IDF weights:
+For BERTScore, independently encode the candidate and reference with a frozen contextual encoder. Let normalized contextual embeddings be $c_i$ and $r_j$. Without IDF weights:
 
-\[
+$$
 P_B=\frac{1}{|C|}\sum_i\max_j c_i^\top r_j,\qquad
 R_B=\frac{1}{|R|}\sum_j\max_i c_i^\top r_j,\qquad
 F_B=\frac{2P_BR_B}{P_B+R_B}.
-\]
+$$
 
 We average per-example F1, precision, and recall separately. The M2 configuration is `bert-score==0.3.13`, `distilbert/distilbert-base-uncased`, **five retained Transformer layers**, `idf=False`, and `rescale_with_baseline=False`. Padding/special-token handling follows BERTScore's implementation. Empty candidate strings receive zero. The exact checkpoint revision is stored in result JSON. This deliberately lightweight encoder is **not** the standard RoBERTa-large setting; do not compare the raw numbers directly to papers using a different encoder, layer, IDF, or rescaling configuration.
 
@@ -74,15 +74,15 @@ Gold uses the existing example fields `example_id`, `paper_id`, `domain`, `targe
 
 ## Confidence metrics: implemented but not yet measured on human data
 
-For true binary acceptability labels \(y_i\) and predicted confidence \(p_i\):
+For true binary acceptability labels $y_i$ and predicted confidence $p_i$:
 
-\[
+$$
 \operatorname{Brier}=\frac{1}{N}\sum_i(p_i-y_i)^2,
 \qquad \operatorname{ECE}=\sum_{b=1}^{10}\frac{|B_b|}{N}
 \left|\operatorname{mean}_{i\in B_b}p_i-\operatorname{mean}_{i\in B_b}y_i\right|.
-\]
+$$
 
-Use ten equal-width bins on [0,1], placing 1 in the last bin and ignoring empty bins. At threshold \(t\), coverage is the fraction with \(p_i\ge t\); risk is the unacceptable fraction among those retained. Evaluate thresholds at distinct confidences, keeping entire tie groups together. We additionally report a right-endpoint step-function area under this risk–coverage curve. At zero coverage set the plotting origin to risk zero; this is a convention, not observed quality.
+Use ten equal-width bins on [0,1], placing 1 in the last bin and ignoring empty bins. At threshold $t$, coverage is the fraction with $p_i\ge t$; risk is the unacceptable fraction among those retained. Evaluate thresholds at distinct confidences, keeping entire tie groups together. We additionally report a right-endpoint step-function area under this risk–coverage curve. At zero coverage set the plotting origin to risk zero; this is a convention, not observed quality.
 
 The optional `--labels human-labels.jsonl` file contains `example_id`, binary `acceptable`, and `prediction_sha256` (the SHA-256 of that exact prediction's UTF-8 text). Labels may cover a subset, and calibration output reports that subset size. A mismatched prediction hash is rejected so labels for one system cannot accidentally be reused for another. There are **no genuine acceptability labels in MS1**, so normal M2 output explicitly marks calibration as not evaluated. Unit-test labels are synthetic and are not experimental results. Do not turn ROUGE/BERTScore into alleged human labels. AUROC, calibration fitting, NLI support scoring, and learned abstention thresholds remain later extensions.
 
