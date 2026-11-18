@@ -42,7 +42,7 @@ See [`MS2_README.md`](MS2_README.md) for setup and exact generation/scoring comm
 python scripts/package_ms2.py
 ```
 
-This creates a minimal `MS2_submission.zip` with the required PDF, scripts, Markdown guides, and their shared code/dependencies. Data, raw results, notebooks, tests, LaTeX source, and project tracking documents remain in GitHub rather than the hand-in archive. Use the MS1 dataset splits for reproduction. Model weights, caches, virtual environments, and the generated zip are excluded from Git. Decisions and the detailed implementation checklist are tracked in [`MS2_ADR.md`](MS2_ADR.md).
+This creates a minimal `MS2_submission.zip` with exactly seven top-level files: the required PDF, three self-contained Python scripts, and three Markdown guides. Shared helper functions are embedded in the packaged scripts; installation commands are in the packaged guides. Data, raw results, notebooks, tests, LaTeX source, and project tracking documents remain in GitHub rather than the hand-in archive. Use the MS1 dataset splits for reproduction. Model weights, caches, virtual environments, and the generated zip are excluded from Git. Decisions and the detailed implementation checklist are tracked in [`MS2_ADR.md`](MS2_ADR.md).
 
 ### Next steps after MS2
 
