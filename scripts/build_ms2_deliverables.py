@@ -88,6 +88,10 @@ The program writes one JSON object per test ID with `prediction`, raw `confidenc
 
 I use the public **base** checkpoint `Qwen/Qwen2.5-1.5B`, not an instruction-tuned model. A frozen causal LM extends the paragraph prefix directly, without a chat template, instructions, retrieved passages, or fine-tuning. This standard pretrained-LM baseline is supported by the [Qwen2.5 technical report](https://arxiv.org/abs/2412.15115). It is not a reproduction of REPLUG's retriever training.
 
+Qwen is a frozen pretrained model: we did not train or fine-tune it on our dataset. We ran inference and scoring on **all 150 held-out test examples**, not all examples across the dataset. The 1,182 training and 150 development examples remain separate. The simple trigram baseline **was fitted on the training split**; neither baseline was tuned or selected using test scores.
+
+Each example comes from a cleaned scientific-paper paragraph with at least 60 words, excluding abstracts and requiring at least three earlier paragraphs. Using a fixed random seed, we choose an eligible paragraph, select a 10-, 30-, or 60-word target length that fits, and cut at a word boundary with at least 15 prefix words. The prefix is the input; the next original words are the gold continuation. Earlier paragraphs are saved as context, but neither MS2 baseline uses them at inference. Papers, including all their examples, stay in separate training/development/test splits.
+
 Greedy decoding uses one beam, seed 5300, at most 2,048 prefix tokens and 256 new tokens. To avoid counting a partial last word, generation stops after more than the requested number of whitespace words appears, and the output is trimmed to the first 10/30/60 words. Early EOS/token-budget limits can yield shorter suggestions; we report length adherence rather than padding them. Mean probabilities cover the emitted subword tokens and are raw diagnostics, not calibrated acceptance probabilities. The model is loaded directly on the chosen device to reduce transient memory.
 
 ## Run

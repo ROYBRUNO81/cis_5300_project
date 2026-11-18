@@ -44,6 +44,10 @@ The report builder refuses incomplete or mismatched measurements. It will not in
 
 ## Current measured evidence
 
+Qwen is a frozen pretrained model: we did not train or fine-tune it on our dataset. We ran inference and scoring on **all 150 held-out test examples**, not all examples across the dataset. The 1,182 training and 150 development examples remain separate. The simple trigram baseline **was fitted on the training split**; neither baseline was tuned or selected using test scores.
+
+Each example comes from a cleaned scientific-paper paragraph with at least 60 words, excluding abstracts and requiring at least three earlier paragraphs. Using a fixed random seed, we choose an eligible paragraph, select a 10-, 30-, or 60-word target length that fits, and cut at a word boundary with at least 15 prefix words. The prefix is the input; the next original words are the gold continuation. Earlier paragraphs are saved as context, but neither MS2 baseline uses them at inference. Papers, including all their examples, stay in separate training/development/test splits.
+
 Both complete Colab evaluations are saved in `results/` and have been checked locally against their hashes and per-example scores:
 
 | System | Test examples | ROUGE-L F1 | BERTScore F1 | Exact requested word length |

@@ -4,6 +4,10 @@
 
 The system extends a scientific paragraph prefix by 10, 30, or 60 **whitespace-separated words**. Gold answers are the original author continuations in `data/processed/{train,dev,test}.jsonl`. M2 evaluates all 150 test examples from 30 papers, balanced at 50 examples in each of NLP, ML, and CV. Test lengths are not balanced: 59 ten-word, 59 thirty-word, and 32 sixty-word targets.
 
+Each example comes from a cleaned scientific-paper paragraph with at least 60 words, excluding abstracts and requiring at least three earlier paragraphs. Using a fixed random seed, we choose an eligible paragraph, select a 10-, 30-, or 60-word target length that fits, and cut at a word boundary with at least 15 prefix words. The prefix is the input; the next original words are the gold continuation. Earlier paragraphs are saved as context, but neither MS2 baseline uses them at inference. Papers, including all their examples, stay in separate training/development/test splits.
+
+Qwen is a frozen pretrained model: we did not train or fine-tune it on our dataset. We ran inference and scoring on **all 150 held-out test examples**, not all examples across the dataset. The 1,182 training and 150 development examples remain separate. The simple trigram baseline **was fitted on the training split**; neither baseline was tuned or selected using test scores.
+
 The primary number is **example-macro ROUGE-L F1**. Secondary BERTScore F1 measures contextual semantic similarity. Both are reference-similarity metrics, **not factuality, acceptability, or calibration measurements**. A valid alternative continuation can score poorly; an unsupported continuation can score well. We retain the single-reference limitation and plan human judgments for the later confidence extension.
 
 ## Formal metric definitions
@@ -74,12 +78,15 @@ Gold uses the existing example fields `example_id`, `paper_id`, `domain`, `targe
 
 ## Confidence metrics: implemented but not yet measured on human data
 
-For true binary acceptability labels $y_i$ and predicted confidence $p_i$:
+For true binary acceptability labels $y_i$ (1 = acceptable, 0 = unacceptable) and predicted confidence $p_i$, let $N$ be the number of labeled predictions and $B_b$ the examples in confidence bin $b$:
 
 $$
-\operatorname{Brier}=\frac{1}{N}\sum_i(p_i-y_i)^2,
-\qquad \operatorname{ECE}=\sum_{b=1}^{10}\frac{|B_b|}{N}
-\left|\operatorname{mean}_{i\in B_b}p_i-\operatorname{mean}_{i\in B_b}y_i\right|.
+\mathrm{Brier}=\frac{1}{N}\sum_{i=1}^{N}(p_i-y_i)^2.
+$$
+
+$$
+\mathrm{ECE}=\sum_{b=1}^{10}\frac{|B_b|}{N}
+\left|\frac{1}{|B_b|}\sum_{i\in B_b}p_i-\frac{1}{|B_b|}\sum_{i\in B_b}y_i\right|.
 $$
 
 Use ten equal-width bins on [0,1], placing 1 in the last bin and ignoring empty bins. At threshold $t$, coverage is the fraction with $p_i\ge t$; risk is the unacceptable fraction among those retained. Evaluate thresholds at distinct confidences, keeping entire tie groups together. We additionally report a right-endpoint step-function area under this risk–coverage curve. At zero coverage set the plotting origin to risk zero; this is a convention, not observed quality.
