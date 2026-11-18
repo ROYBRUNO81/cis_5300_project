@@ -59,8 +59,12 @@ The final two-page report is [report/milestone2.pdf](report/milestone2.pdf). The
 
 ## Report source
 
-The two-page report follows our proposal's 11-point LaTeX format with 0.9-inch margins and all three teammates in the author block. Edit `report/milestone2.tex` and compile with `tectonic report/milestone2.tex`. Install Tectonic separately to rebuild the report; the deliverable builder uses this source when present. The submission archive includes both the `.tex` source and compiled PDF.
+The two-page report follows our proposal's 11-point LaTeX format with 0.9-inch margins and all three teammates in the author block. Edit `report/milestone2.tex` and compile with `tectonic report/milestone2.tex`. Install Tectonic separately to rebuild the report; the deliverable builder uses this source when present. The submission archive contains the compiled PDF; the editable `.tex` source remains in GitHub.
 
 ## Human-label scope
 
 There are no genuine acceptability labels yet. `score.py` implements optional Brier/ECE/risk–coverage checks, but reports them as not evaluated without labels. Neither ROUGE-L nor BERTScore proves factual support. No human judgments, calibration improvements, or abstention results are fabricated for M2.
+
+## Minimal hand-in archive
+
+`MS2_submission.zip` includes only the required PDF, `scoring.md`, `score.py`, both baseline programs and their Markdown guides, plus `common.py`, `requirements-ms2.txt`, and `scripts/download_models.py` needed by the programs and documented commands. Dataset splits were submitted in MS1; use those same splits when running the included commands. Notebooks, datasets, raw predictions, metric JSON files, tests, ADR/README files, LaTeX source, and report-building tools remain in GitHub and are excluded from this hand-in archive.
